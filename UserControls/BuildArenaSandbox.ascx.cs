@@ -74,7 +74,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
 
         public void btnBuild_Click(object sender, EventArgs e)
         {
-            pnlPassword.Visible = false;
+            pnlError.Visible = false;
             pnlReady.Visible = false;
             if (String.IsNullOrEmpty(ddlVersion.SelectedValue) == false)
             {
@@ -82,12 +82,14 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
                     CreateIISApplication() == false ||
                     CreateSandboxDatabase() == false)
                 {
-                    pnlPassword.Visible = true;
+                    pnlError.Visible = true;
                 }
-
-                String username = ArenaContext.Current.User.Identity.Name;
-                ltReady.Text = "Your sandbox is ready for use at <a href=\"http://arena.refreshcache.com/Sandbox/" + username + "\">http://arena.refreshcache.com/Sandbox/" + username + "</a>. You may login with your same username and password.";
-                pnlReady.Visible = true;
+                else
+                {
+                    String username = ArenaContext.Current.User.Identity.Name;
+                    ltReady.Text = "Your sandbox is ready for use at <a href=\"http://arena.refreshcache.com/Sandbox/" + username + "\">http://arena.refreshcache.com/Sandbox/" + username + "</a>. You may login with your same username and password.";
+                    pnlReady.Visible = true;
+                }
             }
         }
 
@@ -104,7 +106,9 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
             //
             try
             {
-                if (LogonUser(username, AuthenticationDomain, txtPassword.Text, 2, 0, out admin_token) != 0)
+                Credentials creds = new Credentials(CurrentOrganization.OrganizationID, CredentialType.ActiveDirectory);
+
+                if (LogonUser(creds.Username, AuthenticationDomain, creds.Password, 2, 0, out admin_token) != 0)
                 {
                     ImpersonateLoggedOnUser(admin_token);
 
@@ -173,7 +177,10 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
             //
             try
             {
-                if (LogonUser(username, AuthenticationDomain, txtPassword.Text, 2, 0, out admin_token) != 0)
+
+                Credentials creds = new Credentials(CurrentOrganization.OrganizationID, CredentialType.ActiveDirectory);
+
+                if (LogonUser(creds.Username, AuthenticationDomain, creds.Password, 2, 0, out admin_token) != 0)
                 {
                     ImpersonateLoggedOnUser(admin_token);
 
@@ -270,7 +277,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
                     //
                     if (DirectoryEntry.Exists("IIS://localhost/W3SVC/1/Root/Sandbox/" + username))
                     {
-                        sandbox = new DirectoryEntry("IIS://localhost/W3SVC/1/Root/Sandbox/cabal95");
+                        sandbox = new DirectoryEntry("IIS://localhost/W3SVC/1/Root/Sandbox/" + username);
                         sandbox.DeleteTree();
                     }
 
