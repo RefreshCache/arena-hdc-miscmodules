@@ -1,4 +1,4 @@
-<%@ Control Language="c#" Inherits="ArenaWeb.UserControls.Custom.HDC.Misc.MyAttributes" Codefile="MyAttributes.ascx.cs" %>
+<%@ Control Language="c#" Inherits="ArenaWeb.UserControls.Custom.HDC.Misc.MyAttributes" Codefile="MyAttributes.ascx.cs" CodeBehind="MyAttributes.ascx.cs" %>
 
 <input type="hidden" id="iRedirect" runat="server" name="iRedirect" />
 

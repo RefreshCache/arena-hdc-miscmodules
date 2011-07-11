@@ -1,4 +1,4 @@
-<%@ Control Language="c#" Inherits="ArenaWeb.UserControls.Custom.HDC.Misc.NewAccount" CodeFile="NewAccount.ascx.cs" %>
+<%@ Control Language="c#" Inherits="ArenaWeb.UserControls.Custom.HDC.Misc.NewAccount" CodeFile="NewAccount.ascx.cs" CodeBehind="NewAccount.ascx.cs" %>
 <%@ Register TagPrefix="Arena" Namespace="Arena.Portal.UI" Assembly="Arena.Portal.UI" %>
 		
 <input type="hidden" id="iRedirect" runat="server" name="iRedirect" />
