@@ -1,4 +1,4 @@
-<%@ Control Language="c#" Inherits="ArenaWeb.UserControls.Custom.HDC.Misc.SelfJoinTags" CodeFile="SelfJoinTags.ascx.cs" %>
+<%@ Control Language="c#" Inherits="ArenaWeb.UserControls.Custom.HDC.Misc.SelfJoinTags" CodeFile="SelfJoinTags.ascx.cs" CodeBehind="SelfJoinTags.ascx.cs" %>
 
 <input type="hidden" id="iRedirect" runat="server" name="iRedirect" />
 
