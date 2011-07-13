@@ -61,6 +61,13 @@
     <Compile Include="BuildArenaSandbox.ascx.designer.cs">
       <DependentUpon>BuildArenaSandbox.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ChannelViewXslt.ascx.cs">
+      <DependentUpon>ChannelViewXslt.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ChannelViewXslt.ascx.designer.cs">
+      <DependentUpon>ChannelViewXslt.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ForceLogout.ascx.cs">
       <DependentUpon>ForceLogout.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -90,15 +97,34 @@
     <Compile Include="SelfJoinTags.ascx.designer.cs">
       <DependentUpon>SelfJoinTags.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ShowPromotion.ascx.cs">
+      <DependentUpon>ShowPromotion.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ShowPromotion.ascx.designer.cs">
+      <DependentUpon>ShowPromotion.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SqlViaXslt.ascx.cs">
+      <DependentUpon>SqlViaXslt.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SqlViaXslt.ascx.designer.cs">
+      <DependentUpon>SqlViaXslt.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="BuildArenaSandbox.ascx" />
+    <Content Include="ChannelViewXslt.ascx" />
     <Content Include="ForceLogout.ascx" />
     <Content Include="MyAttributes.ascx" />
     <Content Include="NewAccount.ascx" />
     <Content Include="SelfJoinTags.ascx" />
+    <Content Include="ShowPromotion.ascx" />
+    <Content Include="SqlViaXslt.ascx" />
     <Content Include="UserLogin.ascx" />
+    <Content Include="XSLT\MediaLibrary.xslt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <ProjectExtensions>
