@@ -53,6 +53,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
 		{
             int profileID = -1, i;
             ProfileCollection profiles;
+            ServingProfile servingProfile;
             ProfileMember pm;
             CheckBox cb;
             Literal lt;
@@ -113,6 +114,19 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                 cb.Enabled = (pm.ProfileID == -1 ? true : false);
                 cb.Checked = (pm.ProfileID == -1 ? false : true);
                 phProfiles.Controls.Add(cb);
+
+                //
+                // If this is a serving profile then make sure it isn't full.
+                //
+                if (profiles[i].ProfileType == ProfileType.Serving)
+                {
+                    servingProfile = new ServingProfile(profiles[i].ProfileID);
+                    if (servingProfile.ProfileActiveMemberCount >= servingProfile.VolunteersNeeded)
+                    {
+                        cb.Enabled = false;
+                        cb.Text += "(currently full)";
+                    }
+                }
 
                 //
                 // Add in a newline character.
