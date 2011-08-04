@@ -124,7 +124,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                     if (servingProfile.ProfileActiveMemberCount >= servingProfile.VolunteersNeeded)
                     {
                         cb.Enabled = false;
-                        cb.Text += "(currently full)";
+                        cb.Text += " (currently full)";
                     }
                 }
 
