@@ -169,6 +169,11 @@ namespace Arena.Custom.HDC.MiscModules.Agents
         #endregion
 
 
+        /// <summary>
+        /// Process all small group cluster types defined for this category ID.
+        /// </summary>
+        /// <param name="state">Agent specific exit state.</param>
+        /// <returns>A WorkerResultStatus value indicating if this agent worker finished processing successfully.</returns>
         WorkerResultStatus Process(out int state)
         {
             GroupClusterCollection clusters;
@@ -197,6 +202,13 @@ namespace Arena.Custom.HDC.MiscModules.Agents
         }
 
 
+        /// <summary>
+        /// Process a single small group cluster. If the cluster has child-clusters then
+        /// each child cluster is processed as well. If the cluster has small groups then
+        /// pass along the small groups to the ProcessGroup method.
+        /// </summary>
+        /// <param name="cluster">The GroupCluster to be processed.</param>
+        /// <returns>True/false status indicating if a fatal error occurred.</returns>
         Boolean ProcessCluster(GroupCluster cluster)
         {
             //
@@ -231,6 +243,13 @@ namespace Arena.Custom.HDC.MiscModules.Agents
         }
 
 
+        /// <summary>
+        /// Process a single small group. Determine if the small group leader has taken
+        /// attendance for their last small group and if not send the leader (and
+        /// optionally assistant-leaders) an e-mail to remind them.
+        /// </summary>
+        /// <param name="group">The small group to check attendance for.</param>
+        /// <returns>True/false status indicating if a fatal error occurred.</returns>
         Boolean ProcessGroup(Group group)
         {
             GroupOccurrence occurrence = null;
