@@ -10,6 +10,11 @@ namespace Arena.Custom.HDC.MiscModules.Communications
     [Description("Agent | SG Attendance Reminder")]
     public class AttendanceReminder : CommunicationType
     {
+        public AttendanceReminder()
+        {
+        }
+
+
         public override string[] GetMergeFields()
         {
             List<string> fields = new List<string>();
