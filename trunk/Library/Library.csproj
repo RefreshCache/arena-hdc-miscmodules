@@ -51,9 +51,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AgentBase">
-      <HintPath>..\..\..\Arena-SDK-2010.1\AgentBase.dll</HintPath>
-    </Reference>
     <Reference Include="Arena.Framework">
       <HintPath>..\..\..\Arena-SDK-2010.1\Arena.Framework.dll</HintPath>
     </Reference>
@@ -71,7 +68,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agents\SmallGroupAttendanceReminder.cs" />
     <Compile Include="Communications\AttendanceReminder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
