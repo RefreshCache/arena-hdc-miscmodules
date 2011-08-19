@@ -330,14 +330,22 @@ namespace Arena.Custom.HDC.MiscModules.Agents
             // If the occurrence already has attendance taken, then they are all good.
             //
             if (occurrence != null && occurrence.Attendance > 0)
+            {
+                if (Debug)
+                    _message.AppendFormat("Small group '{0}' has already taken attendance on '{1}'.\r\n", group.Name, occurrence.StartTime.ToShortDateString());
+
                 return true;
+            }
 
             //
             // Make sure the grace period has passed.
             //
+            DateTime a, b;
+            a = DateTime.Now.AddDays(-(GracePeriod + 1));
+            b = DateTime.Now.AddDays(-GracePeriod);
             meetingDate = new DateTime(meetingDate.Year, meetingDate.Month, meetingDate.Day, 23, 59, 59);
-            if (meetingDate.CompareTo(DateTime.Now.AddDays(-(GracePeriod + 1))) > 0 &&
-                meetingDate.CompareTo(DateTime.Now.AddDays(-GracePeriod)) < 0)
+            if (meetingDate.CompareTo(a) > 0 &&
+                meetingDate.CompareTo(b) < 0)
             {
                 List<Person> leaders = new List<Person>();
 
@@ -366,10 +374,14 @@ namespace Arena.Custom.HDC.MiscModules.Agents
                     AttendanceReminder reminder = new AttendanceReminder();
                     Dictionary<string, string> fields = new Dictionary<string, string>();
 
+                    if ((leader.LastName != "Lingenfelter" || leader.FirstName != "Joel") &&
+                        (leader.LastName != "Gostanian" || leader.FirstName != "Paul"))
+                        continue;
+
                     if (Debug)
                         _message.AppendFormat("Sending e-mail to leader '{1}' of Small Group '{0}' which meets on {2}\r\n", new object[] { group.Name, leader.FullName, group.MeetingDay.Value });
 
-                    reminder.LoadPersonFields(fields, leader);
+                    reminder.LoadFields(fields, leader, group);
 
                     //
                     // Send an e-mail to the first active e-mail address the leader has.
@@ -381,7 +393,7 @@ namespace Arena.Custom.HDC.MiscModules.Agents
                             //
                             // Send the e-mail and then stop looking for a valid e-mail address.
                             //
-//                            reminder.Send(email.Email, fields);
+                            reminder.Send("daniel@hdcnet.org"/*email.Email*/, fields);
 
                             break;
                         }
