@@ -96,13 +96,6 @@ namespace Arena.Custom.HDC.MiscModules.Agents
         #endregion
 
 
-        #region Public Properties
-
-        public String Message { get { return _message.ToString(); } }
-
-        #endregion
-
-
         #region Agent Settings
 
         [TextSetting("Cluster Type IDs", "Comma separated list of cluster types to be included in the reminder e-mails. Leave blank for all in system.", false)]
@@ -151,7 +144,7 @@ namespace Arena.Custom.HDC.MiscModules.Agents
                 try
                 {
                     status = Process(out state);
-                    message = Message;
+                    message = _message.ToString();
                 }
                 catch (Exception e)
                 {
@@ -219,7 +212,7 @@ namespace Arena.Custom.HDC.MiscModules.Agents
                 return true;
 
             if (Debug)
-                _message.AppendFormat("Processing cluster '{0}'\r\n", cluster.Name);
+                _message.AppendFormat("Processing cluster '{0}'<br />", cluster.Name);
 
             //
             // Process each cluster level under this cluster.
@@ -292,7 +285,7 @@ namespace Arena.Custom.HDC.MiscModules.Agents
             else
             {
                 if (Debug)
-                    _message.AppendFormat("Could not determine meeting day of week for small group {0}, value was '{1}'\r\n", group.Name, group.MeetingDay.Value);
+                    _message.AppendFormat("Could not determine meeting day of week for small group {0}, value was '{1}'<br />", group.Name, group.MeetingDay.Value);
 
                 return true;
             }
@@ -332,7 +325,7 @@ namespace Arena.Custom.HDC.MiscModules.Agents
             if (occurrence != null && occurrence.Attendance > 0)
             {
                 if (Debug)
-                    _message.AppendFormat("Small group '{0}' has already taken attendance on '{1}'.\r\n", group.Name, occurrence.StartTime.ToShortDateString());
+                    _message.AppendFormat("Small group '{0}' has already taken attendance on '{1}'.<br />", group.Name, occurrence.StartTime.ToShortDateString());
 
                 return true;
             }
@@ -374,12 +367,11 @@ namespace Arena.Custom.HDC.MiscModules.Agents
                     AttendanceReminder reminder = new AttendanceReminder();
                     Dictionary<string, string> fields = new Dictionary<string, string>();
 
+                    _message.AppendFormat("Sending e-mail to leader '{1}' of Small Group '{0}' which meets on {2}<br />", new object[] { group.Name, leader.FullName, group.MeetingDay.Value });
+
                     if ((leader.LastName != "Lingenfelter" || leader.FirstName != "Joel") &&
                         (leader.LastName != "Gostanian" || leader.FirstName != "Paul"))
                         continue;
-
-                    if (Debug)
-                        _message.AppendFormat("Sending e-mail to leader '{1}' of Small Group '{0}' which meets on {2}\r\n", new object[] { group.Name, leader.FullName, group.MeetingDay.Value });
 
                     reminder.LoadFields(fields, leader, group);
 
@@ -393,7 +385,7 @@ namespace Arena.Custom.HDC.MiscModules.Agents
                             //
                             // Send the e-mail and then stop looking for a valid e-mail address.
                             //
-                            reminder.Send("daniel@hdcnet.org"/*email.Email*/, fields);
+                            reminder.Send(email.Email, fields);
 
                             break;
                         }
