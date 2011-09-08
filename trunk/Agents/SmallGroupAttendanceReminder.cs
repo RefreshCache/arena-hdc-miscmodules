@@ -30,7 +30,7 @@ namespace Arena.Custom.HDC.MiscModules.Agents
         private int _organizationID = 1;
         private int _gracePeriod = 1;
         private Boolean _debug = false;
-        private StringBuilder _message = new StringBuilder();
+        private StringBuilder _message;
 
         private int[] AssistantLeaderRoles
         {
@@ -143,6 +143,7 @@ namespace Arena.Custom.HDC.MiscModules.Agents
 
                 try
                 {
+                    _message = new StringBuilder();
                     status = Process(out state);
                     message = _message.ToString();
                 }
