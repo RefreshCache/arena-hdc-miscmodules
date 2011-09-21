@@ -370,10 +370,6 @@ namespace Arena.Custom.HDC.MiscModules.Agents
 
                     _message.AppendFormat("Sending e-mail to leader '{1}' of Small Group '{0}' which meets on {2}<br />", new object[] { group.Name, leader.FullName, group.MeetingDay.Value });
 
-                    if ((leader.LastName != "Lingenfelter" || leader.FirstName != "Joel") &&
-                        (leader.LastName != "Gostanian" || leader.FirstName != "Paul"))
-                        continue;
-
                     reminder.LoadFields(fields, leader, group);
 
                     //
