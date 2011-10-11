@@ -58,6 +58,8 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
             CheckBox cb;
             Literal lt;
 
+            BasePage.AddJavascriptInclude(Page, BasePage.JQUERY_INCLUDE);
+
             //
             // Deal with redirects.
             //
@@ -111,8 +113,13 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                 //
                 cb.ID = profiles[i].ProfileID.ToString();
                 cb.Text = profiles[i].Title;
-                cb.Enabled = (pm.ProfileID == -1 ? true : false);
-                cb.Checked = (pm.ProfileID == -1 ? false : true);
+                cb.CssClass = "sjt_profile";
+                if (pm.ProfileID != -1)
+                {
+                    cb.Enabled = false;
+                    cb.Checked = true;
+                    cb.CssClass += " sjt_disabled";
+                }
                 phProfiles.Controls.Add(cb);
 
                 //
@@ -121,10 +128,11 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                 if (profiles[i].ProfileType == ProfileType.Serving)
                 {
                     servingProfile = new ServingProfile(profiles[i].ProfileID);
-                    if (servingProfile.ProfileActiveMemberCount >= servingProfile.VolunteersNeeded)
+                    if (servingProfile.VolunteersNeeded > 0 && servingProfile.ProfileActiveMemberCount >= servingProfile.VolunteersNeeded)
                     {
                         cb.Enabled = false;
                         cb.Text += " (currently full)";
+                        cb.CssClass += " sjt_full";
                     }
                 }
 
