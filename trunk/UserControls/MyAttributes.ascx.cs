@@ -5,6 +5,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
     using System.Text.RegularExpressions;
 	using System.Data;
 	using System.Drawing;
+	using System.Linq;
 	using System.Web;
 	using System.Web.UI;
 	using System.Web.UI.WebControls;
@@ -68,22 +69,28 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
             //
             attributes = new PersonAttributeCollection();
             attributes.LoadByGroup(new AttributeGroup(Convert.ToInt32(AttributeGroupSetting)), CurrentPerson.PersonID);
-            for (i = 0; i < attributes.Count; i++)
-            {
-                if (attributes[i].AttributeType == DataType.YesNo)
-                {
-                    cb = new CheckBox();
-                    cb.ID = attributes[i].AttributeId.ToString();
-                    cb.Text = attributes[i].AttributeName;
-                    cb.Enabled = (attributes[i].Readonly == false ? true : false);
-                    cb.Checked = (attributes[i].IntValue == 1 ? true : false);
-                    phAttributes.Controls.Add(cb);
-                }
+			
+			// Sort them
+			var sortedAttributes = from attribute in attributes orderby attribute.AttributeOrder select attribute;
 
-                lt = new Literal();
-                lt.Text = "<br />";
-                phAttributes.Controls.Add(lt);
-            }
+			foreach (var attribute in sortedAttributes)
+			{
+				if (attribute.AttributeType == DataType.YesNo)
+				{
+					cb = new CheckBox();
+					cb.Checked = (attribute.IntValue == 1 ? true : false);
+					SetFromAttributeAndAdd(cb, attribute);
+				}
+				else if (attribute.AttributeType == DataType.String)
+				{
+					TextBox tb = new TextBox();
+					tb.Text = HttpUtility.HtmlDecode(attribute.StringValue);
+					SetFromAttributeAndAdd(tb, attribute);
+				}
+				lt = new Literal();
+				lt.Text = "<br />";
+				phAttributes.Controls.Add(lt);
+			}
 
             //
             // Add in a "none of the above" option if requested. This does
@@ -98,6 +105,18 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                 phAttributes.Controls.Add(cb);
             }
         }
+
+		protected void SetFromAttributeAndAdd(WebControl control, Arena.Core.Attribute attribute)
+		{
+			Label label = new Label();
+			label.Text = attribute.AttributeName + " ";
+
+			control.ID = attribute.AttributeId.ToString();
+			control.Enabled = (attribute.Readonly == false ? true : false);
+
+			phAttributes.Controls.Add(label);
+			phAttributes.Controls.Add(control);
+		}
 
 		protected void Page_PreRender(object sender, EventArgs e)
 		{
@@ -123,6 +142,12 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                     attribute.IntValue = Convert.ToInt32(cbox.Checked);
                     attribute.Save(CurrentOrganization.OrganizationID, CurrentUser.Identity.Name);
                 }
+				else if (phAttributes.Controls[i].GetType() == typeof(TextBox))
+				{
+					TextBox tb = (TextBox)phAttributes.Controls[i];
+					attribute.StringValue = HttpUtility.HtmlEncode(tb.Text);
+					attribute.Save(CurrentOrganization.OrganizationID, CurrentUser.Identity.Name);
+				}
             }
 
             //
