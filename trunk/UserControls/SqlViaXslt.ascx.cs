@@ -40,8 +40,11 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
         [FileSetting("XsltUrl", "The path to the Xslt file to use.", true)]
         public string XsltUrlSetting { get { return Setting("XsltUrl", null, true); } }
 
-        [TextSetting("Suppress Columns", "A semi-colon delmited list of column names that are returned by the query, but should not be displayed.", false)]
+        [TextSetting("Suppress Columns", "A semi-colon delimited list of column names that are returned by the query, but should not be displayed.", false)]
         public string[] SuppressColumnsSetting { get { return Setting("SuppressColumns", "", false).Split(';'); } }
+
+        [TextSetting("Query Parameters", "A semi-colon delimited list of SQL Parameters whose values will be pulled from the query string.", false)]
+        public string[] QueryParametersSetting { get { return Setting("QueryParameters", "", false).Split(';'); } }
 
         #endregion
 
@@ -53,70 +56,120 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
             StringBuilder sb = new StringBuilder();
             XmlDocument doc = new XmlDocument();
             XmlNode root, fields, rows;
-            SqlDataReader rdr;
-            String query = SQLQuerySetting;
+            SqlConnection con = null;
+            SqlDataReader rdr = null;
+            SqlCommand cmd;
+            ArrayList parameters = new ArrayList();
             int i;
 
 
             //
-            // Do some custom replacement.
+            // Connect to SQL.
             //
-            query = query.ReplaceNonCaseSensitive("@@PersonID@@", (ArenaContext.Current.Person != null ? ArenaContext.Current.Person.PersonID.ToString() : "-1"));
+            try {
+                con = new Arena.DataLib.SqlDbConnection().GetDbConnection();
+                con.Open();
+                cmd = con.CreateCommand();
 
-            //
-            // Execute the reader.
-            //
-            if (true)
-                rdr = new Arena.DataLayer.Organization.OrganizationData().ExecuteReader(query);
-            else
-                rdr = new Arena.DataLayer.Organization.OrganizationData().ExecuteReader(query, new ArrayList());
+                //
+                // Do some custom replacement.
+                //
+                cmd.CommandText = SQLQuerySetting.ReplaceNonCaseSensitive("@@PersonID@@", (ArenaContext.Current.Person != null ? ArenaContext.Current.Person.PersonID.ToString() : "-1"));
 
-            root = doc.CreateElement("sql");
-            doc.AppendChild(root);
-
-            fields = doc.CreateElement("fields");
-            root.AppendChild(fields);
-            for (i = 0; i < rdr.FieldCount; i++)
-            {
-                XmlNode field;
-
-                if (!SuppressColumnsSetting.Contains(rdr.GetName(i)))
+                //
+                // Put in all Query Parameters configured.
+                //
+                foreach (String qp in QueryParametersSetting)
                 {
-                    field = doc.CreateElement("field");
-                    field.InnerText = rdr.GetName(i);
-                    fields.AppendChild(field);
+                    if (Request.QueryString[qp] != null)
+                        cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", qp), Request.QueryString[qp]));
+                    else
+                        cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", qp), DBNull.Value));
                 }
-            }
 
-            rows = doc.CreateElement("rows");
-            root.AppendChild(rows);
-            while (rdr.Read())
-            {
-                XmlNode row;
+                //
+                // Execute the reader.
+                //
+                rdr = cmd.ExecuteReader();
 
-                row = doc.CreateElement("row");
-                rows.AppendChild(row);
+                //
+                // Start creating the XML output.
+                //
+                root = doc.CreateElement("sql");
+                doc.AppendChild(root);
 
+                //
+                // Put in all the field names under a fields element.
+                //
+                fields = doc.CreateElement("fields");
+                root.AppendChild(fields);
                 for (i = 0; i < rdr.FieldCount; i++)
                 {
-                    XmlNode node;
+                    XmlNode field;
 
                     if (!SuppressColumnsSetting.Contains(rdr.GetName(i)))
                     {
-                        node = doc.CreateElement(rdr.GetName(i));
-                        node.InnerText = rdr[i].ToString();
-                        row.AppendChild(node);
+                        field = doc.CreateElement("field");
+                        field.InnerText = rdr.GetName(i);
+                        fields.AppendChild(field);
                     }
                 }
+
+                //
+                // Load in each row of data under a rows element.
+                //
+                rows = doc.CreateElement("rows");
+                root.AppendChild(rows);
+                while (rdr.Read())
+                {
+                    XmlNode row;
+
+                    row = doc.CreateElement("row");
+                    rows.AppendChild(row);
+
+                    //
+                    // Each row is comprised of one or more field name elements.
+                    //
+                    for (i = 0; i < rdr.FieldCount; i++)
+                    {
+                        XmlNode node;
+
+                        if (!SuppressColumnsSetting.Contains(rdr.GetName(i)))
+                        {
+                            node = doc.CreateElement(rdr.GetName(i));
+                            node.InnerText = rdr[i].ToString();
+                            row.AppendChild(node);
+                        }
+                    }
+                }
+
+                //
+                // Prepare the translator to convert the XML via XSLT.
+                //
+                XPathNavigator navigator = doc.CreateNavigator();
+                XslCompiledTransform transform = new XslCompiledTransform();
+                transform.Load(base.Server.MapPath(XsltUrlSetting));
+
+                //
+                // Translate and store the data.
+                //
+                transform.Transform((IXPathNavigable)navigator, null, new StringWriter(sb));
+                ltContent.Text = sb.ToString();
             }
-
-            XPathNavigator navigator = doc.CreateNavigator();
-            XslCompiledTransform transform = new XslCompiledTransform();
-            transform.Load(base.Server.MapPath(XsltUrlSetting));
-
-            transform.Transform((IXPathNavigable)navigator, null, new StringWriter(sb));
-
-            ltContent.Text = sb.ToString();
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                //
+                // Close all our SQL connections.
+                //
+                if (rdr != null)
+                    rdr.Close();
+                if (con != null)
+                    con.Close();
+            }
         }
 
         #endregion
