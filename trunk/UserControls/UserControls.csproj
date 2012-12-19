@@ -13,6 +13,7 @@
     <RootNamespace>ArenaWeb.UserControls.Custom.HDC.MiscModules</RootNamespace>
     <AssemblyName>ArenaWeb.UserControls.Custom.HDC.MiscModules</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,11 +33,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Arena.Framework">
-      <HintPath>..\..\..\Arena-SDK-2009.2\Arena.Framework.dll</HintPath>
+    <Reference Include="AjaxControlToolkit">
+      <HintPath>..\..\..\Arena-SDK-2011.2\AjaxControlToolkit.dll</HintPath>
     </Reference>
-    <Reference Include="Arena.Portal.UI">
-      <HintPath>..\..\..\Arena-SDK-2009.2\Arena.Portal.UI.dll</HintPath>
+    <Reference Include="Arena, Version=2010.1.100.18809, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Arena-SDK-2011.2\Arena.dll</HintPath>
+    </Reference>
+    <Reference Include="Arena.Framework, Version=2009.2.100.35701, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Arena-SDK-2011.2\Arena.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Arena.Portal.UI, Version=2009.2.100.35701, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Arena-SDK-2011.2\Arena.Portal.UI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -54,6 +64,13 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressEditor.ascx.cs">
+      <DependentUpon>AddressEditor.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AddressEditor.ascx.designer.cs">
+      <DependentUpon>AddressEditor.ascx</DependentUpon>
+    </Compile>
     <Compile Include="BuildArenaSandbox.ascx.cs">
       <DependentUpon>BuildArenaSandbox.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -67,6 +84,27 @@
     </Compile>
     <Compile Include="ChannelViewXslt.ascx.designer.cs">
       <DependentUpon>ChannelViewXslt.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DisplaySign.ascx.cs">
+      <DependentUpon>DisplaySign.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DisplaySign.ascx.designer.cs">
+      <DependentUpon>DisplaySign.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DisplaySignEntry.ascx.cs">
+      <DependentUpon>DisplaySignEntry.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DisplaySignEntry.ascx.designer.cs">
+      <DependentUpon>DisplaySignEntry.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DisplaySignList.ascx.cs">
+      <DependentUpon>DisplaySignList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DisplaySignList.ascx.designer.cs">
+      <DependentUpon>DisplaySignList.ascx</DependentUpon>
     </Compile>
     <Compile Include="ForceLogout.ascx.cs">
       <DependentUpon>ForceLogout.ascx</DependentUpon>
@@ -113,9 +151,23 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AddressEditor.ascx" />
     <Content Include="BuildArenaSandbox.ascx" />
     <Content Include="ChannelViewXslt.ascx" />
+    <Content Include="DisplaySign.ascx" />
+    <Content Include="DisplaySignEntry.ascx" />
+    <Content Include="DisplaySignList.ascx" />
     <Content Include="ForceLogout.ascx" />
+    <Content Include="Images\Colorbox\border.png" />
+    <Content Include="Images\Colorbox\controls.png" />
+    <Content Include="Images\Colorbox\loading.gif" />
+    <Content Include="Images\Colorbox\loading_background.png" />
+    <Content Include="Images\DisplaySignBlank.png" />
+    <Content Include="Includes\colorbox.css" />
+    <Content Include="Includes\DisplaySign.css" />
+    <Content Include="Includes\jquery-ui-timepicker-addon.js" />
+    <Content Include="Includes\jquery.colorbox-min.js" />
+    <Content Include="Includes\jquery.rs.slideshow.min.js" />
     <Content Include="MyAttributes.ascx" />
     <Content Include="NewAccount.ascx" />
     <Content Include="SelfJoinTags.ascx" />
