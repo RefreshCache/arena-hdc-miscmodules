@@ -53,6 +53,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
         protected override void OnInit(EventArgs e)
         {
             dgPromotions.ReBind += new Arena.Portal.UI.DataGridReBindEventHandler(dgPromotions_ReBind);
+            dgPromotions.DeleteCommand += new DataGridCommandEventHandler(dgPromotions_DeleteCommand);
 
             base.OnInit(e);
         }
@@ -143,7 +144,8 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
             dgPromotions.ItemAltBgColor = base.CurrentPortalPage.Setting("ItemAltBgColor", string.Empty, false);
             dgPromotions.ItemMouseOverColor = base.CurrentPortalPage.Setting("ItemMouseOverColor", string.Empty, false);
             dgPromotions.AddEnabled = false;
-            dgPromotions.DeleteEnabled = false;
+            dgPromotions.DeleteEnabled = true;
+            dgPromotions.DeleteIsAsync = false;
             dgPromotions.EditEnabled = false;
             dgPromotions.MergeEnabled = false;
             dgPromotions.MailEnabled = false;
@@ -199,9 +201,9 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
         /// </summary>
         /// <param name="sender">The object causing this event to be triggered.</param>
         /// <param name="e">The arguments for this event.</param>
-        protected void btnDelete_Command(object sender, CommandEventArgs e)
+        protected void dgPromotions_DeleteCommand(object sender, DataGridCommandEventArgs e)
         {
-            PromotionRequest promotion = new PromotionRequest(Convert.ToInt32(e.CommandArgument));
+            PromotionRequest promotion = new PromotionRequest(Convert.ToInt32(e.Item.Cells[0].Text));
 
 
             //
