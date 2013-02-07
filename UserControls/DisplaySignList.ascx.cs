@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -19,7 +21,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
     {
         #region Module Settings
 
-        [TextSetting("Topic Area", "Comma separated list of topic areas to include.", true)]
+        [LookupMultiSelectSetting("Topic Area", "List of topic areas to include.", true, "1FE55E22-F67C-46BA-A6AE-35FD112AFD6D", "")]
         public String TopicAreaSetting { get { return Setting("TopicArea", "", true); } }
 
         [PageSetting("Edit Page", "Display Sign Entry edit module page.", true)]

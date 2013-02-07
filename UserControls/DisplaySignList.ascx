@@ -13,6 +13,9 @@
         <asp:TemplateColumn HeaderText="End Date" SortExpression="web_end_date" ItemStyle-Wrap="false" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
             <ItemTemplate><%# GetFormattedDateLong(DataBinder.Eval(Container.DataItem, "web_end_date")) %></ItemTemplate>
         </asp:TemplateColumn>
+        <asp:TemplateColumn HeaderText="Topic Area" SortExpression="topic_area" ItemStyle-Wrap="false" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
+            <ItemTemplate><%# DataBinder.Eval(Container.DataItem, "topic_area") %></ItemTemplate>
+        </asp:TemplateColumn>
         <asp:TemplateColumn HeaderText="Weekly" ItemStyle-Wrap="false" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
             <ItemTemplate><asp:Image ID="imgWeekly" runat="server" ImageUrl="~/images/check.gif" Visible='<%# (DataBinder.Eval(Container.DataItem, "web_summary").ToString() == "Weekly") %>' /></asp:Image></ItemTemplate>
         </asp:TemplateColumn>

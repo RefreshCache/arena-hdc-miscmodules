@@ -27,13 +27,13 @@ namespace ArenaWeb.UserControls.Custom.HDC.CheckIn
     {
         #region Module Settings
 
-        [TextSetting("Topic Areas", "Enter a comma separated list of topic areas to be displayed by this module (e.g. \"423,827\")", true)]
+        [LookupMultiSelectSetting("Topic Areas", "List of topic areas to include.", true, "1FE55E22-F67C-46BA-A6AE-35FD112AFD6D", "")]
         public string TopicAreaList { get { return Setting("TopicAreaList", "", true); } }
 
         [NumericSetting("Slide Time", "Enter the time in seconds you want each slide to display. (defaults to 5 seconds)", false)]
         public int SlideTimeSetting { get { return Convert.ToInt32(Setting("SlideTime", "5", false)); } }
 
-        [NumericSetting("Transition Time", "Enter the time in milliseconds you want each slide to display. (defaults to 1000 = 1 second)", false)]
+        [NumericSetting("Transition Time", "Enter the time in milliseconds you want the transition duration to be. (defaults to 1000 = 1 second)", false)]
         public int TransitionTimeSetting { get { return Convert.ToInt32(Setting("TransitionTime", "1000", false)); } }
 
         #endregion
@@ -46,7 +46,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.CheckIn
         /// <param name="e">Details about the event.</param>
         private void Page_Init(object sender, EventArgs e)
         {
-            BasePage.AddJavascriptInclude(Page, "http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js");
+            BasePage.AddJavascriptInclude(Page, "//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js");
             BasePage.AddJavascriptInclude(Page, "UserControls/Custom/HDC/Misc/Includes/jquery.rs.slideshow.min.js");
             BasePage.AddCssLink(Page, "UserControls/Custom/HDC/Misc/Includes/DisplaySign.css");
         }
