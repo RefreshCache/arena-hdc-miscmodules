@@ -22,6 +22,9 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
 
         #region Module Settings
 
+        [LookupMultiSelectSetting("Topic Area", "List of topic areas to include.", true, "1FE55E22-F67C-46BA-A6AE-35FD112AFD6D", "")]
+        public String TopicAreaSetting { get { return Setting("TopicArea", "", true); } }
+
         [NumericSettingAttribute("Required Width", "The required width of an image. 0 or blank if not required.", false)]
         public int RequiredWidthSetting { get { return Convert.ToInt32(Setting("RequiredWidth", "0", false)); } }
 
@@ -59,6 +62,18 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
             mdlDocuments.JSFunctionName = "openChooseDocumentWindow(documentTypeFilter, selectedID, documentTypeID)";
 
             //
+            // Setup the lookup drop down list.
+            //
+            ddlTopicArea.Items.Add(new ListItem("", "-1"));
+            String[] topicAreas = TopicAreaSetting.Split(',');
+            foreach (String topicArea in topicAreas)
+            {
+                Lookup area = new Lookup(Convert.ToInt32(topicArea));
+
+                ddlTopicArea.Items.Add(new ListItem(area.Value, area.LookupID.ToString()));
+            }
+
+            //
             // Load the promotion into memory.
             //
             LoadRequest();
@@ -78,8 +93,21 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
             if (!IsPostBack)
             {
                 tbTitle.Text = promotion.Title;
+                if (promotion.PromotionRequestID == -1)
+                {
+                    promotion.WebStartDate = DateTime.Now;
+                    promotion.WebEndDate = DateTime.Now;
+                }
                 tbStartDate.Text = promotion.WebStartDate.ToString("MM/dd/yyyy hh:mm tt").ToLower();
                 tbEndDate.Text = promotion.WebEndDate.ToString("MM/dd/yyyy hh:mm tt").ToLower();
+                try
+                {
+                    ddlTopicArea.SelectedValue = promotion.TopicArea.LookupID.ToString();
+                }
+                catch
+                {
+                    ddlTopicArea.SelectedValue = "-1";
+                }
                 cbWeekly.Checked = (promotion.WebSummary == "Weekly");
             }
 
@@ -121,6 +149,9 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
                     {
                         int ignored = item.ByteArray.Length;
 
+                        promotion.Save(CurrentUser.Identity.Name);
+                        item.PromotionRequestID = promotion.PromotionRequestID;
+                        item.BlobID = Convert.ToInt32(this.ihBlobID.Value);
                         item.Description = "999";
                         item.Save(CurrentUser.Identity.Name);
                         promotion.Documents.Add(item);
@@ -303,63 +334,8 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
         /// <param name="e">Information about the event.</param>
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            bool valid = true;
-            DateTime startDate = DateTime.Now, endDate = DateTime.Now;
-
-
-            //
-            // Check if the user entered a valid title.
-            //
-            if (tbTitle.Text.Trim().Length == 0)
-                valid = false;
-
-            //
-            // Check for valid date and time on both start and end dates.
-            //
-            try
-            {
-                startDate = DateTime.Parse(tbStartDate.Text);
-                endDate = DateTime.Parse(tbEndDate.Text);
-            }
-            catch { valid = false; }
-
-            //
-            // Must have at-least one image.
-            //
-            if (promotion.Documents.Count == 0)
-                valid = false;
-
-            //
-            // If anything was not valid then put up an error message.
-            //
-            if (valid == false)
-            {
-                lbMessage.Text = "Invalid information entered. Please make sure to enter a title, start and end dates as well as one or more images.";
-                lbMessage.Visible = true;
-
+            if (SavePromotion() == false)
                 return;
-            }
-            else
-                lbMessage.Visible = false;
-
-            //
-            // Set all the various information about the promotion.
-            //
-            promotion.Title = tbTitle.Text.Trim();
-            promotion.ContactName = "";
-            promotion.ContactEmail = "";
-            promotion.ContactPhone = "";
-            promotion.EventID = -1;
-            promotion.Campus = null;
-            promotion.TopicArea = new Lookup(888);
-            promotion.WebPromote = true;
-            promotion.WebStartDate = startDate;
-            promotion.WebEndDate = endDate;
-            promotion.WebApprovedDate = DateTime.Now;
-            promotion.WebApprovedBy = CurrentUser.Identity.Name;
-            promotion.WebSummary = (cbWeekly.Checked ? "Weekly" : "");
-
-            promotion.Save(CurrentUser.Identity.Name);
 
             if (!String.IsNullOrEmpty(Request.Params["RETURN"]))
             {
@@ -411,6 +387,76 @@ namespace ArenaWeb.UserControls.Custom.HDC.MiscModules
             }
 
             ShowDocuments();
+        }
+
+
+        /// <summary>
+        /// Save the promotion and return a true/false indicating wether there was an error
+        /// while saving or not.
+        /// </summary>
+        /// <returns>true if successfully saved, false otherwise.</returns>
+        private Boolean SavePromotion()
+        {
+            bool valid = true;
+            DateTime startDate = DateTime.Now, endDate = DateTime.Now;
+
+
+            //
+            // Check if the user entered a valid title.
+            //
+            if (tbTitle.Text.Trim().Length == 0)
+                valid = false;
+
+            //
+            // Check for valid date and time on both start and end dates.
+            //
+            try
+            {
+                startDate = DateTime.Parse(tbStartDate.Text);
+                endDate = DateTime.Parse(tbEndDate.Text);
+            }
+            catch { valid = false; }
+
+            //
+            // Check for selected lookup.
+            //
+            if (String.IsNullOrEmpty(ddlTopicArea.SelectedValue) || ddlTopicArea.SelectedValue == "-1")
+                valid = false;
+
+            //
+            // If anything was not valid then put up an error message.
+            //
+            if (valid == false)
+            {
+                lbMessage.Text = "Invalid information entered. Please make sure to enter a title, start and end dates as well as one or more images.";
+                lbMessage.Visible = true;
+
+                return false;
+            }
+            else
+                lbMessage.Visible = false;
+
+            //
+            // Set all the various information about the promotion.
+            //
+            promotion.Title = tbTitle.Text.Trim();
+            promotion.ContactName = "";
+            promotion.ContactEmail = "";
+            promotion.ContactPhone = "";
+            promotion.EventID = -1;
+            promotion.Campus = null;
+            promotion.TopicArea = new Lookup(Convert.ToInt32(ddlTopicArea.SelectedValue));
+            promotion.WebPromote = true;
+            promotion.WebStartDate = startDate;
+            promotion.WebEndDate = endDate;
+            promotion.WebApprovedDate = DateTime.Now;
+            promotion.WebApprovedBy = CurrentUser.Identity.Name;
+            promotion.WebSummary = (cbWeekly.Checked ? "Weekly" : "");
+
+            promotion.Save(CurrentUser.Identity.Name);
+            Session["HDC_PROMOTION"] = promotion;
+
+            return true;
         }
     }
 }

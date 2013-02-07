@@ -40,6 +40,10 @@ span.formTitle { display: inline-block; min-width: 100px; }
     <span class="formItem"><asp:TextBox ID="tbEndDate" runat="server"></asp:TextBox></span>
 </div>
 <div>
+    <span class="formTitle">Topic Area:</span>
+    <span class="formItem"><asp:DropDownList ID="ddlTopicArea" runat="server" /></span>
+</div>
+<div>
     <span class="formTitle">Weekly:</span>
     <span class="formItem"><asp:CheckBox ID="cbWeekly" runat="server" /></span>
 </div>
