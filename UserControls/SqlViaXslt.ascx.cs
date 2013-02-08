@@ -81,10 +81,13 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                 //
                 foreach (String qp in QueryParametersSetting)
                 {
-                    if (Request.QueryString[qp] != null)
-                        cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", qp), Request.QueryString[qp]));
-                    else
-                        cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", qp), DBNull.Value));
+                    if (!String.IsNullOrEmpty(qp))
+                    {
+                        if (Request.QueryString[qp] != null)
+                            cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", qp), Request.QueryString[qp]));
+                        else
+                            cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", qp), DBNull.Value));
+                    }
                 }
 
                 //
@@ -110,7 +113,7 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                     if (!SuppressColumnsSetting.Contains(rdr.GetName(i)))
                     {
                         field = doc.CreateElement("field");
-                        field.InnerText = rdr.GetName(i);
+                        field.InnerText = rdr.GetName(i).Replace("_", " ");
                         fields.AppendChild(field);
                     }
                 }
