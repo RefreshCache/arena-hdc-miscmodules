@@ -48,6 +48,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Arena-SDK-2011.2\Arena.Portal.UI.dll</HintPath>
     </Reference>
+    <Reference Include="Aspose.Words">
+      <HintPath>..\..\..\..\..\..\..\..\Arena\Stable\Arena\bin\Aspose.Words.dll</HintPath>
+    </Reference>
     <Reference Include="PdfSharp-WPF">
       <HintPath>..\..\..\..\..\..\Desktop\PDFsharp-MigraDocFoundation-Assemblies-1_32\WPF\PdfSharp-WPF.dll</HintPath>
     </Reference>
@@ -131,6 +134,13 @@
       <DependentUpon>NewAccount.ascx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportGridFromTable.ascx.cs">
+      <DependentUpon>ReportGridFromTable.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportGridFromTable.ascx.designer.cs">
+      <DependentUpon>ReportGridFromTable.ascx</DependentUpon>
+    </Compile>
     <Compile Include="SelfJoinTags.ascx.cs">
       <DependentUpon>SelfJoinTags.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -173,6 +183,7 @@
     <Content Include="Includes\jquery.rs.slideshow.min.js" />
     <Content Include="MyAttributes.ascx" />
     <Content Include="NewAccount.ascx" />
+    <Content Include="ReportGridFromTable.ascx" />
     <Content Include="SelfJoinTags.ascx" />
     <Content Include="ShowPromotion.ascx" />
     <Content Include="SqlViaXslt.ascx" />
