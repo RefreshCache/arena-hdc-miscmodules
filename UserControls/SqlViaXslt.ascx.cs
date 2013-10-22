@@ -34,17 +34,23 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
     {
         #region Module Settings
 
-        [TextSetting("SQL Query", "The SQL statement to run.", true)]
+        [TextSetting("SQL Query", "The SQL statement to run. (ex: exec sp_name @sp_param1 = @url_param1, @sp_param2 = @url_param2, @sp_param3 = @url_param3, @sp_param4 = 1234 )", true)]
         public string SQLQuerySetting { get { return Setting("SQLQuery", null, true); } }
 
-        [FileSetting("XsltUrl", "The path to the Xslt file to use.", true)]
+        [FileSetting("XsltUrl", "The path to the Xslt file to use. (ex: ~/UserControls/custom/OHC/RawXml/RawXml.xslt)", true)]
         public string XsltUrlSetting { get { return Setting("XsltUrl", null, true); } }
 
         [TextSetting("Suppress Columns", "A semi-colon delimited list of column names that are returned by the query, but should not be displayed.", false)]
         public string[] SuppressColumnsSetting { get { return Setting("SuppressColumns", "", false).Split(';'); } }
 
-        [TextSetting("Query Parameters", "A semi-colon delimited list of SQL Parameters whose values will be pulled from the query string.", false)]
+        [TextSetting("Query Parameters", "A semi-colon delimited list of SQL Parameters whose values will be pulled from the query string. (ex: url_param1;url_param2;url_param3)", false)]
         public string[] QueryParametersSetting { get { return Setting("QueryParameters", "", false).Split(';'); } }
+
+        [TextSetting("XSLT Parameters", "A semi-colon delimited list of static parameters that will be passed to the XSLT parser. (ex: Color=blue;Width=400px)", false)]
+        public string[] XSLTParametersSetting { get { return Setting("XSLTParameters", "", false).Split(';'); } }
+
+        [BooleanSetting("Output Raw XML", "Indicates if only XML should be returned.", false, false)]
+        public bool RawXmlSetting { get { return Convert.ToBoolean(Setting("RawXml", "false", false)); } }
 
         #endregion
 
@@ -83,10 +89,17 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                 {
                     if (!String.IsNullOrEmpty(qp))
                     {
-                        if (Request.QueryString[qp] != null)
-                            cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", qp), Request.QueryString[qp]));
+                        String[] opts = qp.Split('=');
+                        String o, v = null;
+                        
+                        o = opts[0];
+                        if (opts.Length == 2)
+                            v = opts[1];
+
+                        if (Request.QueryString[o] != null)
+                            cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", o), Request.QueryString[o]));
                         else
-                            cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", qp), DBNull.Value));
+                            cmd.Parameters.Add(new SqlParameter(String.Format("@{0}", o), (v == null ? (object)DBNull.Value : (object)v)));
                     }
                 }
 
@@ -151,13 +164,42 @@ namespace ArenaWeb.UserControls.Custom.HDC.Misc
                 //
                 XPathNavigator navigator = doc.CreateNavigator();
                 XslCompiledTransform transform = new XslCompiledTransform();
+                XsltArgumentList argsList = new XsltArgumentList();
+
                 transform.Load(base.Server.MapPath(XsltUrlSetting));
+                argsList.AddParam("ControlID", "", this.ClientID);
+                foreach (String p in XSLTParametersSetting) {
+                    try {
+                        String[] s = p.Split('=');
+
+                        if (s.Length == 1)
+                        {
+                            if (Request.QueryString[s[0]] != null)
+                                argsList.AddParam(s[0], "", Request.QueryString[s[0]]);
+                        }
+                        else
+                            argsList.AddParam(s[0], "", s[1]);
+                    }
+                    catch (System.Exception ex)
+                    {
+                    }
+                }
 
                 //
                 // Translate and store the data.
                 //
-                transform.Transform((IXPathNavigable)navigator, null, new StringWriter(sb));
+                transform.Transform((IXPathNavigable)navigator, argsList, new StringWriter(sb));
                 ltContent.Text = sb.ToString();
+
+                //
+                // If RawXmlSetting is True, output only XML.
+                //
+                if (RawXmlSetting == true)
+                {
+                    Response.Write(sb.ToString());
+                    Response.ContentType = "application/xml";
+                    Response.End();
+                }
             }
             catch (System.Exception ex)
             {
