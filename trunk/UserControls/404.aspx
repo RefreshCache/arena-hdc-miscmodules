@@ -26,6 +26,7 @@ background-color:#555555;}
   <h3>The resource you are looking for might have been removed, had its name changed, or is temporarily unavailable.</h3>
  </fieldset></div>
 </div>
+<asp:label style="display: none;" id="lbDebug" runat="server" />
 </body>
 </html>
 
@@ -95,9 +96,16 @@ public void Page_Load(object sender, System.EventArgs e)
 
     try
     {
-        string Path = new Uri(Request.RawUrl.Split(';')[1]).AbsolutePath;
+        string Path;
         LookupCollection lc = new LookupCollection(FriendlyUrlID);
-
+        
+        if (Request.RawUrl.Contains(";"))
+            Path = new Uri(Request.RawUrl.Split(';')[1]).AbsolutePath;
+        else if (Request.RawUrl.Contains("aspxerrorpath"))
+            Path = Request.RawUrl.Split('=')[1];
+        else
+            Path = Request.RawUrl;
+        lbDebug.Text = "URL: " + Path + "    Raw: " + Request.RawUrl;
 
         //
         // Get the Portal.

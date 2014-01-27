@@ -164,6 +164,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="404.aspx" />
     <Content Include="AddressEditor.ascx" />
     <Content Include="BuildArenaSandbox.ascx" />
     <Content Include="ChannelViewXslt.ascx" />
